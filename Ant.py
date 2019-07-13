@@ -7,10 +7,11 @@ MAGE_ANT = 2
 
 
 class Ant:
-    def __init__(self, world, pos, ant_type):
+    def __init__(self, world, pos, ant_type, change_factor):
         self.world = world
         self.pos = pos
         self.type = ant_type
+        self.change_factor = change_factor
 
         self.image = self.get_img()
 
@@ -28,7 +29,7 @@ class Ant:
             return pygame.image.load("img/totally_free_mage_ant.png")
 
     def balance_type(self):
-        if min(self.counters) < 0.5 * max(self.counters):
+        if min(self.counters) < self.change_factor * max(self.counters):
             self.type = self.counters.index(min(self.counters))
             self.image = self.get_img()
 

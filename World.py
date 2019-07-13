@@ -5,13 +5,22 @@ EMPTY_SPACE = None
 
 
 class World:
-    def __init__(self, world_size, population):
+    def __init__(self, world_size, population, change_factor):
         self.world_size = world_size
         self.population = population
+        self.change_factor = change_factor
 
         self.map = [[None for y in range(world_size)] for x in range(world_size)]
 
         self.populate()
+
+    def get_count(self):
+        counter = [0, 0, 0]
+        for y in range(self.world_size):
+            for x in range(self.world_size):
+                if self.map[y][x] is not None:
+                    counter[self.map[y][x].type] += 1
+        return counter
 
     def check_classes(self):
         for y in range(self.world_size):
@@ -34,7 +43,7 @@ class World:
                 x, y = random.randint(0, self.world_size - 1), random.randint(0, self.world_size - 1)
                 if self.map[y][x] is None:
                     found_unused_cell = True
-                    self.map[y][x] = Ant(pos=(x, y), world=self, ant_type=WORKER_ANT)
+                    self.map[y][x] = Ant(pos=(x, y), world=self, ant_type=WORKER_ANT, change_factor=self.change_factor)
 
     def move_ants(self):
         for y in range(self.world_size):

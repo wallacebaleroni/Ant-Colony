@@ -5,6 +5,7 @@ from World import *
 # Parameters
 WORLD_SIZE = 40
 POPULATION = 100
+CHANGE_FACTOR = 0.5
 
 WORKER_ANT = 0
 
@@ -20,7 +21,7 @@ def handle_events(events):
 
 
 def main():
-    world = World(WORLD_SIZE, POPULATION)
+    world = World(WORLD_SIZE, POPULATION, CHANGE_FACTOR)
 
     pygame.init()
 
@@ -28,12 +29,19 @@ def main():
 
     world.show(tela)
 
+    print("World size: %d" % WORLD_SIZE ** 2)
+    print("Ants number: %d" % POPULATION)
+    print("Change factor: %d%%" % (CHANGE_FACTOR * 100))
+    print()
+
     running = True
     while running:
         world.move_ants()
         world.check_classes()
 
         world.show(tela)
+        counter = world.get_count()
+        print("WO: %d, WA: %d, MA: %d " % (counter[0], counter[1], counter[2]), end="\r")
 
         running = handle_events(pygame.event.get())
 
