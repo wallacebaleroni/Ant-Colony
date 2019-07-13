@@ -1,8 +1,7 @@
-import random
+from Ant import *
 
 # Constraints
-EMPTY_SPACE = 0
-ANT = 1
+EMPTY_SPACE = None
 
 
 class World:
@@ -10,45 +9,35 @@ class World:
         self.world_size = world_size
         self.population = population
 
-        self.world = [[0 for y in range(world_size)] for x in range(world_size)]
+        self.map = [[None for y in range(world_size)] for x in range(world_size)]
 
         self.populate()
 
-    def show(self):
-        for line in self.world:
-            for cell in line:
-                print("%d " % cell, end="")
-            print()
-        print()
+    def check_classes(self):
+        for y in range(self.world_size):
+            for x in range(self.world_size):
+                if self.map[y][x] is not None:
+                    self.map[y][x].check_surrounding()
+
+    def show(self, tela):
+        tela.fill((0, 0, 0))
+
+        for i in range(self.world_size):
+            for j in range(self.world_size):
+                if self.map[i][j] is not None:
+                    self.map[i][j].draw(tela)
 
     def populate(self):
         for i in range(self.population):
-            unused_cell = False
-            while not unused_cell:
-                x, y = random.randint(0, 9), random.randint(0, 9)
-                if self.world[y][x] == EMPTY_SPACE:
-                    unused_cell = True
-                    self.world[y][x] = ANT
-
-    def get_valid_moves(self, x, y):
-        moves = [(0, 0)]
-
-        for y_move in (-1, 0, 1):
-            for x_move in (-1, 0, 1):
-                if (0 <= x + x_move < self.world_size
-                        and 0 <= y + y_move < self.world_size
-                        and self.world[y + y_move][x + x_move] == EMPTY_SPACE):
-                    moves.append((x_move, y_move))
-
-        return moves
+            found_unused_cell = False
+            while not found_unused_cell:
+                x, y = random.randint(0, self.world_size - 1), random.randint(0, self.world_size - 1)
+                if self.map[y][x] is None:
+                    found_unused_cell = True
+                    self.map[y][x] = Ant(pos=(x, y), world=self, ant_type=WORKER_ANT)
 
     def move_ants(self):
         for y in range(self.world_size):
             for x in range(self.world_size):
-                if self.world[y][x] == ANT:
-                    moves = self.get_valid_moves(x, y)
-
-                    x_move, y_move = random.choice(moves)
-
-                    self.world[y][x] = EMPTY_SPACE
-                    self.world[y + y_move][x + x_move] = ANT
+                if self.map[y][x] is not None:
+                    self.map[y][x].move()
